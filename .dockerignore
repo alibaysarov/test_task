@@ -1,0 +1,13 @@
+.git
+.env
+vendor
+node_modules
+database/*.sqlite
+storage/logs/*
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+bootstrap/cache/*
+public/vendor
+resources/views/scribe
+.phpunit.result.cache

@@ -6,6 +6,7 @@ use App\Models\Payment;
 use App\Models\Referral;
 use App\Models\ReferralEarning;
 use App\Services\Referral\ReferralService;
+use Illuminate\Support\Facades\DB;
 
 class PaymentObserver
 {
@@ -39,17 +40,19 @@ class PaymentObserver
             return;
         }
 
-        ReferralEarning::create([
-            'referrer_master_id' => $referral->referrer_master_id,
-            'referred_master_id' => $referral->referred_master_id,
-            'referral_id' => $referral->id,
-            'payment_id' => $payment->id,
-            'payment_amount' => $payment->amount,
-            'amount' => $this->referrals->rewardAmount((int) $payment->amount),
-            'percent' => (int) config('referral.percent'),
-            'status' => ReferralEarning::STATUS_PENDING,
-        ]);
+        DB::transaction(function () use ($payment, $referral): void {
+            ReferralEarning::create([
+                'referrer_master_id' => $referral->referrer_master_id,
+                'referred_master_id' => $referral->referred_master_id,
+                'referral_id' => $referral->id,
+                'payment_id' => $payment->id,
+                'payment_amount' => $payment->amount,
+                'amount' => $this->referrals->rewardAmount((int) $payment->amount),
+                'percent' => (int) config('referral.percent'),
+                'status' => ReferralEarning::STATUS_PENDING,
+            ]);
 
-        $referral->update(['status' => Referral::STATUS_REWARDED]);
+            $referral->update(['status' => Referral::STATUS_REWARDED]);
+        });
     }
 }

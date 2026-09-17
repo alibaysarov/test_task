@@ -1,5 +1,13 @@
 /vendor
+/openapi.yaml
+/collections.json
 /node_modules
 .env
 .phpunit.result.cache
 /database/database.sqlite
+/public/vendor/scribe/
+/resources/views/scribe/
+/.scribe/endpoints/*
+!/.scribe/endpoints/custom.*.yaml
+/.scribe/endpoints.cache/
+/.scribe/.filehashes

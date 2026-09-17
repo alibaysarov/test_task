@@ -21,7 +21,7 @@ class ResolveCurrentMaster
     {
         $masterId = $request->header('X-Master-Id');
 
-        if (!empty($masterId)) {
+        if (is_string($masterId) && ctype_digit($masterId) && (int) $masterId > 0) {
             $request->attributes->set('current_master', Master::find($masterId));
         }
 

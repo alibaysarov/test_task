@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Привязка приведённого мастера к тому, кто его привёл.
@@ -13,6 +14,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * Программы:
  *  - master_invite — мастер пригласил мастера по своему коду
  *  - influencer    — мастер пришёл по промокоду инфлюенсера
+ *
+ * @property-read Master $referrerMaster
+ * @property-read Master $referredMaster
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, ReferralEarning> $earnings
  */
 class Referral extends Model
 {
@@ -27,19 +32,26 @@ class Referral extends Model
     protected $fillable = [
         'referrer_master_id',
         'referred_master_id',
+        'program',
         'status',
     ];
 
-    /** Кто привёл. */
+    /** Возвращает мастера, который привёл реферала. */
     public function referrerMaster(): BelongsTo
     {
         return $this->belongsTo(Master::class, 'referrer_master_id');
     }
 
-    /** Кого привели. */
+    /** Возвращает приглашённого мастера. */
     public function referredMaster(): BelongsTo
     {
         return $this->belongsTo(Master::class, 'referred_master_id');
+    }
+
+    /** Начисления по этой привязке. */
+    public function earnings(): HasMany
+    {
+        return $this->hasMany(ReferralEarning::class);
     }
 
     /**
